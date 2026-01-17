@@ -2,6 +2,22 @@
 
 A production-ready reaction-speed game built with Next.js 14, NextUI, MongoDB, and Redis. Test your reflexes and compete with players worldwide!
 
+## 🚀 Recent Updates (v2.0)
+
+**Major improvements in this release:**
+- ✅ Fixed critical MongoDB ObjectId casting errors
+- ✅ Implemented Worldcoin MiniKit authentication with drawer UI
+- ✅ Added persistent user profiles with preferences
+- ✅ Enhanced Redis connection with automatic MongoDB fallbacks
+- ✅ Real leaderboards showing actual usernames (no more mock data!)
+- ✅ PWA icons properly configured
+- ✅ Comprehensive error handling and security improvements
+
+📚 **New Documentation:**
+- [MiniKit Authentication Guide](MINIKIT_AUTH.md) - Complete auth flow documentation
+- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Detailed change log
+- [Security Review](SECURITY.md) - Security analysis and recommendations
+
 ## 🎯 Features
 
 - **Reflex Duel Game**: Test your reaction time with a simple tap-when-green mechanic
