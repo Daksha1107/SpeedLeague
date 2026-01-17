@@ -23,8 +23,8 @@ export async function GET(
 
     await connectDB();
 
-    // Get user
-    const user = await User.findById(userId);
+    // Get user - Fix: Use findOne instead of findById
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },

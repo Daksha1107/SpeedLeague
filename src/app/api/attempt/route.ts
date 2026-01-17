@@ -29,12 +29,13 @@ export async function POST(request: NextRequest) {
     // Connect to database
     await connectDB();
 
-    // Get or create user
-    let user = await User.findById(userId);
+    // Get or create user - Fix: Use findOne instead of findById
+    let user = await User.findOne({ _id: userId });
     if (!user) {
       user = await User.create({
         _id: userId,
         isVerified: false,
+        username: `Player${Math.floor(Math.random() * 10000)}`,
         currentStreak: 0,
         longestStreak: 0,
         totalAttempts: 0,

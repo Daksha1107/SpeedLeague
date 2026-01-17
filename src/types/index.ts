@@ -1,6 +1,7 @@
 // User types
 export interface IUser {
   _id: string;
+  username?: string;
   worldId?: string;
   isVerified: boolean;
   country?: string;

@@ -2,6 +2,13 @@ import mongoose, { Schema, Model } from 'mongoose';
 import { IUser } from '@/types';
 
 const UserSchema = new Schema<IUser>({
+  _id: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+  },
   worldId: {
     type: String,
     unique: true,
@@ -40,7 +47,7 @@ const UserSchema = new Schema<IUser>({
   allTimeBest: {
     type: Number,
   },
-});
+}, { _id: false });
 
 // Index for verified users sorted by activity
 UserSchema.index({ isVerified: 1, lastActive: -1 });
