@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Trophy, BarChart3, Shield, LucideIcon } from 'lucide-react';
-import { colors, components } from '@/styles/theme';
+import { motion } from 'framer-motion';
 
 interface Tab {
   id: string;
@@ -31,10 +31,11 @@ export default function BottomNav() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 backdrop-blur-lg border-t border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 py-3 soft-card rounded-3xl mx-auto"
       style={{
-        height: components.bottomNav.height,
-        backgroundColor: colors.background.primary,
+        maxWidth: '420px',
+        height: '72px',
+        background: 'var(--panel)',
       }}
     >
       {tabs.map((tab) => {
@@ -42,21 +43,21 @@ export default function BottomNav() {
         const active = isActive(tab.href);
         
         return (
-          <button
+          <motion.button
             key={tab.id}
             onClick={() => router.push(tab.href)}
             className="flex flex-col items-center justify-center gap-1 transition-all duration-300"
+            whileTap={{ scale: 0.95 }}
             style={{
-              color: active ? components.bottomNav.activeColor : components.bottomNav.inactiveColor,
+              color: active ? 'white' : 'rgba(255,255,255,0.6)',
             }}
           >
-            <Icon
-              size={Number(components.bottomNav.iconSize)}
-              className="transition-transform duration-300"
-              style={{
-                transform: active ? 'scale(1.1)' : 'scale(1)',
-              }}
-            />
+            <motion.div
+              animate={{ scale: active ? 1.1 : 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Icon size={24} />
+            </motion.div>
             <span
               className="text-xs font-medium"
               style={{
@@ -65,7 +66,7 @@ export default function BottomNav() {
             >
               {tab.label}
             </span>
-          </button>
+          </motion.button>
         );
       })}
     </div>

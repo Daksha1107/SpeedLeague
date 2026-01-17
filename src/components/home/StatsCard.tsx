@@ -1,32 +1,24 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { colors, components } from '@/styles/theme';
 
-interface StatsCardProps {
+interface StatPillProps {
   icon: ReactNode;
   label: string;
   value: string;
 }
 
-export default function StatsCard({ icon, label, value }: StatsCardProps) {
+export default function StatPill({ icon, label, value }: StatPillProps) {
   return (
-    <div
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl border"
-      style={{
-        backgroundColor: colors.background.cardTransparent,
-        borderColor: colors.border,
-        boxShadow: components.card.shadow,
-      }}
-    >
+    <div className="soft-card px-4 py-3 flex items-center gap-3">
       <div 
         className="flex items-center justify-center w-10 h-10 rounded-full"
-        style={{ backgroundColor: 'rgba(0, 180, 255, 0.1)' }}
+        style={{ backgroundColor: 'rgba(27, 182, 255, 0.1)' }}
       >
         {icon}
       </div>
       <div className="flex-1">
-        <p className="text-xs" style={{ color: colors.text.secondary }}>
+        <p className="text-xs text-[var(--muted)]">
           {label}
         </p>
         <p className="text-lg font-bold text-white">
@@ -36,3 +28,6 @@ export default function StatsCard({ icon, label, value }: StatsCardProps) {
     </div>
   );
 }
+
+// Export as StatPill with alias for backward compatibility
+export { StatPill as StatsCard };

@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ScreenContainer from '@/components/layout/ScreenContainer';
+import { ChevronDown } from 'lucide-react';
 import BottomNav from '@/components/layout/BottomNav';
 import TopBar from '@/components/layout/TopBar';
-import LeagueLadder from '@/components/league/LeagueLadder';
-import { UserStats, LeagueTier } from '@/types';
-import { colors } from '@/styles/theme';
+import LeagueTier from '@/components/league/LeagueTier';
+import { UserStats } from '@/types';
 
 export default function LeaguePage() {
   const router = useRouter();
@@ -39,36 +38,62 @@ export default function LeaguePage() {
 
   if (loading) {
     return (
-      <ScreenContainer>
-        <div className="min-h-screen flex items-center justify-center">
+      <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+        <div className="mx-auto max-w-[420px] px-4 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="text-4xl mb-4">🏆</div>
-            <p style={{ color: colors.text.secondary }}>Loading league...</p>
+            <p className="text-[var(--muted)]">Loading league...</p>
           </div>
         </div>
-      </ScreenContainer>
+      </main>
     );
   }
 
-  const currentLeague: LeagueTier = stats?.currentLeague || 'Gold';
+  const currentLeague = stats?.currentLeague || 'Gold';
 
   return (
-    <ScreenContainer>
-      <TopBar title="League" showBack={true} />
-
-      <div className="py-6">
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      <div className="mx-auto max-w-[420px] px-4 pt-6 pb-24">
+        
+        <TopBar title="League" showBack={true} showMenu={false} />
+        
         {/* League Ladder */}
-        <LeagueLadder currentLeague={currentLeague} />
-
+        <div className="mt-8 space-y-4">
+          <LeagueTier tier="Apex" color="apex" />
+          <div className="flex justify-center">
+            <ChevronDown className="text-white/30" size={16} />
+          </div>
+          
+          <LeagueTier tier="Diamond" color="diamond" />
+          <div className="flex justify-center">
+            <ChevronDown className="text-white/30" size={16} />
+          </div>
+          
+          <LeagueTier 
+            tier="Gold" 
+            color="gold" 
+            active={currentLeague === 'Gold'} 
+            label="Current League"
+          />
+          <div className="flex justify-center">
+            <ChevronDown className="text-white/30" size={16} />
+          </div>
+          
+          <LeagueTier tier="Silver" color="silver" />
+          <div className="flex justify-center">
+            <ChevronDown className="text-white/30" size={16} />
+          </div>
+          
+          <LeagueTier tier="Bronze" color="bronze" />
+        </div>
+        
         {/* Season Info */}
-        <div className="text-center mt-8">
-          <p className="text-sm" style={{ color: colors.text.secondary }}>
-            Season Ends in <span className="font-bold text-white">2 Days</span>
-          </p>
+        <div className="mt-8 text-center text-white/60 text-sm">
+          Season Ends in 2 Days
         </div>
       </div>
-
+      
       <BottomNav />
-    </ScreenContainer>
+    </main>
   );
 }

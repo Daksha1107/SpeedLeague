@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ScreenContainer from '@/components/layout/ScreenContainer';
 import BottomNav from '@/components/layout/BottomNav';
 import TopBar from '@/components/layout/TopBar';
 import LeaderboardTabs from '@/components/leaderboard/LeaderboardTabs';
 import LeaderboardList from '@/components/leaderboard/LeaderboardList';
 import { LeaderboardResponse } from '@/types';
-import { colors } from '@/styles/theme';
 
 export default function LeaderboardPage() {
   const [userId, setUserId] = useState<string>('');
@@ -40,32 +38,38 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <ScreenContainer>
-      <TopBar title="Leaderboard" />
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      <div className="mx-auto max-w-[420px] px-4 pt-6 pb-24">
+        
+        {/* TopBar */}
+        <TopBar title="Leaderboard" showMenu={false} />
 
-      <div className="py-6 space-y-6">
         {/* Tabs */}
-        <LeaderboardTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <div className="mt-6">
+          <LeaderboardTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+        </div>
 
         {/* Leaderboard List */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">⏳</div>
-            <p style={{ color: colors.text.secondary }}>Loading leaderboard...</p>
-          </div>
-        ) : leaderboard ? (
-          <LeaderboardList entries={leaderboard.entries} currentUserId={userId} />
-        ) : (
-          <div className="text-center py-12">
-            <p style={{ color: colors.text.secondary }}>Failed to load leaderboard</p>
-          </div>
-        )}
+        <div className="mt-6">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">⏳</div>
+              <p className="text-[var(--muted)]">Loading leaderboard...</p>
+            </div>
+          ) : leaderboard ? (
+            <LeaderboardList entries={leaderboard.entries} currentUserId={userId} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-[var(--muted)]">Failed to load leaderboard</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <BottomNav />
-    </ScreenContainer>
+    </main>
   );
 }

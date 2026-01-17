@@ -1,87 +1,48 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { colors, measurements } from '@/styles/theme';
 import { LeagueTier as LeagueTierType } from '@/types';
 
 interface LeagueTierProps {
   tier: LeagueTierType;
-  isCurrent?: boolean;
-  showUpArrow?: boolean;
-  showDownArrow?: boolean;
-  delay?: number;
+  color: 'apex' | 'diamond' | 'gold' | 'silver' | 'bronze';
+  active?: boolean;
+  label?: string;
 }
 
-const tierColors: Record<LeagueTierType, string> = {
-  Apex: colors.league.apex,
-  Diamond: colors.league.diamond,
-  Gold: colors.league.gold,
-  Silver: colors.league.silver,
-  Bronze: colors.league.bronze,
-};
-
-const tierGradients: Record<LeagueTierType, string> = {
-  Apex: `linear-gradient(90deg, ${colors.league.apex} 0%, #8B5CF6 100%)`,
-  Diamond: `linear-gradient(90deg, ${colors.league.diamond} 0%, #3B82F6 100%)`,
-  Gold: `linear-gradient(90deg, ${colors.league.gold} 0%, #F59E0B 100%)`,
-  Silver: `linear-gradient(90deg, ${colors.league.silver} 0%, #6B7280 100%)`,
-  Bronze: `linear-gradient(90deg, ${colors.league.bronze} 0%, #92400E 100%)`,
+const colorMap = {
+  apex: 'var(--apex)',
+  diamond: 'var(--diamond)',
+  gold: 'var(--gold)',
+  silver: 'var(--silver)',
+  bronze: 'var(--bronze)',
 };
 
 export default function LeagueTier({ 
   tier, 
-  isCurrent = false, 
-  showUpArrow = false,
-  showDownArrow = false,
-  delay = 0,
+  color, 
+  active = false,
+  label 
 }: LeagueTierProps) {
   return (
     <div className="relative">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4, delay }}
-        whileHover={{ scale: 1.02 }}
-        className="relative rounded-full px-8 py-4 border flex items-center justify-between transition-all"
+      <div 
+        className={`soft-card px-6 py-4 flex items-center justify-center rounded-full ${
+          active ? 'glow-gold scale-105' : ''
+        }`}
         style={{
-          height: measurements.league.tierCardHeight,
-          background: isCurrent ? tierGradients[tier] : colors.background.cardTransparent,
-          borderColor: isCurrent ? tierColors[tier] : colors.border,
-          boxShadow: isCurrent 
-            ? `0 0 30px ${tierColors[tier]}50`
-            : 'none',
-          transform: isCurrent ? `scale(${measurements.league.currentScale})` : 'scale(1)',
+          background: active 
+            ? `linear-gradient(90deg, ${colorMap[color]}, ${colorMap[color]}dd)`
+            : 'rgba(255,255,255,0.02)'
         }}
       >
-        {/* Tier Name */}
-        <div className="flex items-center gap-3">
-          {showUpArrow && (
-            <ChevronUp size={measurements.league.arrowSize} color={colors.text.secondary} />
-          )}
-          <span 
-            className="text-xl font-bold"
-            style={{ 
-              color: isCurrent ? colors.background.primary : colors.text.primary,
-            }}
-          >
-            {tier}
-          </span>
-          {showDownArrow && (
-            <ChevronDown size={measurements.league.arrowSize} color={colors.text.secondary} />
-          )}
+        <span className="text-white font-semibold">{tier}</span>
+      </div>
+      
+      {label && (
+        <div className="absolute -right-4 top-1/2 -translate-y-1/2 text-[var(--blue)] text-xs whitespace-nowrap">
+          {label}
         </div>
-
-        {/* Current League Label */}
-        {isCurrent && (
-          <span 
-            className="text-xs font-semibold"
-            style={{ color: colors.primary.accent }}
-          >
-            Current League
-          </span>
-        )}
-      </motion.div>
+      )}
     </div>
   );
 }

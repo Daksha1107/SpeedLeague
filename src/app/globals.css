@@ -3,13 +3,36 @@
 @tailwind utilities;
 
 :root {
+  /* Legacy variables */
   --foreground-rgb: 255, 255, 255;
-  --background-rgb: 15, 25, 36;
+  --background-rgb: 7, 21, 32;
+
+  /* Dark Neumorphic Design Tokens */
+  --bg: #071520;           /* deep navy background */
+  --panel: #0b1f2e;        /* card base */
+  --panel-2: #08202b;      /* darker section */
+  --stroke: rgba(255,255,255,0.06);
+
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.55);
+
+  --blue: #1bb6ff;         /* main accent cyan */
+  --blue2: #0d8cff;        /* darker blue for gradients */
+
+  --gold: #f5b301;
+  --silver: #8b9aa6;
+  --bronze: #cd7f32;
+  --diamond: #60a5fa;
+  --apex: #a78bfa;
+
+  /* Neumorphism shadows */
+  --shadow-up: rgba(255,255,255,0.06);
+  --shadow-down: rgba(0,0,0,0.6);
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #0F1924;
+  background: var(--bg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -26,5 +49,32 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Dark Neumorphic Utilities */
+  .soft-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    box-shadow:
+      -8px -8px 20px var(--shadow-up),
+      10px 12px 24px var(--shadow-down);
+  }
+
+  .soft-inset {
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+    border-radius: 999px;
+    box-shadow:
+      inset -6px -6px 12px rgba(255,255,255,0.05),
+      inset 8px 10px 18px rgba(0,0,0,0.7);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 0 1px rgba(27,182,255,0.25), 0 10px 40px rgba(27,182,255,0.18);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 0 1px rgba(245,179,1,0.25), 0 10px 40px rgba(245,179,1,0.18);
   }
 }

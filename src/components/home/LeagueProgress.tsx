@@ -1,6 +1,5 @@
 'use client';
 
-import { colors, borderRadius } from '@/styles/theme';
 import { LeagueTier } from '@/types';
 
 interface LeagueProgressProps {
@@ -9,41 +8,43 @@ interface LeagueProgressProps {
 }
 
 const tierColors: Record<LeagueTier, string> = {
-  Apex: colors.league.apex,
-  Diamond: colors.league.diamond,
-  Gold: colors.league.gold,
-  Silver: colors.league.silver,
-  Bronze: colors.league.bronze,
+  Apex: 'var(--apex)',
+  Diamond: 'var(--diamond)',
+  Gold: 'var(--gold)',
+  Silver: 'var(--silver)',
+  Bronze: 'var(--bronze)',
 };
 
 export default function LeagueProgress({ tier, progress }: LeagueProgressProps) {
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between mb-2">
+    <div className="soft-card p-4 mt-6">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-white">
             {tier} League
           </span>
           <span className="text-lg">🏆</span>
         </div>
+        <span className="text-xs text-[var(--muted)]">
+          {progress}%
+        </span>
       </div>
       
       {/* Progress Bar */}
-      <div
-        className="w-full h-2 rounded-full overflow-hidden"
-        style={{ backgroundColor: colors.track }}
-      >
-        <div
-          className="h-full transition-all duration-500 ease-out rounded-full"
-          style={{
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${colors.primary.blue} 0%, ${colors.primary.accent} 100%)`,
-          }}
-        />
+      <div className="relative">
+        <div className="w-full h-3 rounded-full overflow-hidden bg-[rgba(255,255,255,0.05)]">
+          <div
+            className="h-full transition-all duration-500 ease-out rounded-full glow-blue"
+            style={{
+              width: `${progress}%`,
+              background: `linear-gradient(90deg, var(--blue2), var(--blue))`,
+            }}
+          />
+        </div>
       </div>
       
-      <p className="text-xs mt-1" style={{ color: colors.text.secondary }}>
-        {progress}% to next promotion
+      <p className="text-xs mt-2 text-[var(--muted)]">
+        {100 - progress}% to next promotion
       </p>
     </div>
   );
