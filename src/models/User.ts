@@ -42,8 +42,7 @@ const UserSchema = new Schema<IUser>({
   },
 });
 
-// Indexes
-UserSchema.index({ worldId: 1 }, { unique: true, sparse: true });
+// Index for verified users sorted by activity
 UserSchema.index({ isVerified: 1, lastActive: -1 });
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
