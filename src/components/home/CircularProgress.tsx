@@ -27,7 +27,7 @@ export default function CircularProgress({ reactionTime, percentile }: CircularP
 
   return (
     <div className="flex items-center justify-center py-8">
-      <div className="relative" style={{ width: size, height: size }}>
+      <div className="relative" style={{ width: `${size}px`, height: `${size}px` }}>
         {/* Glow Effect */}
         <div 
           className="absolute inset-0 rounded-full blur-2xl opacity-30"
