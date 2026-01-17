@@ -9,27 +9,27 @@ module.exports = {
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'navy-dark': '#0F1924',
+        'navy-light': '#1A2332',
+        'blue-primary': '#0080FF',
+        'blue-light': '#00B4FF',
+        'blue-accent': '#00D4FF',
+      },
+    },
   },
   darkMode: "class",
   plugins: [nextui({
     themes: {
-      light: {
-        colors: {
-          primary: {
-            DEFAULT: "#3b82f6",
-            foreground: "#ffffff",
-          },
-          focus: "#3b82f6",
-        },
-      },
       dark: {
         colors: {
           primary: {
-            DEFAULT: "#3b82f6",
+            DEFAULT: "#00B4FF",
             foreground: "#ffffff",
           },
-          focus: "#3b82f6",
+          focus: "#00B4FF",
+          background: "#0F1924",
         },
       },
     },
