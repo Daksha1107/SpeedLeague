@@ -46,8 +46,14 @@ export function AuthDrawer({ isOpen, onClose, onSuccess }: AuthDrawerProps) {
       }
 
       // Store user ID in localStorage
-      localStorage.setItem('speedleague_userId', data.userId);
-      localStorage.setItem('speedleague_isVerified', String(data.isVerified));
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('speedleague_userId', data.userId);
+          localStorage.setItem('speedleague_isVerified', String(data.isVerified));
+        }
+      } catch (err) {
+        console.warn('Failed to save to localStorage:', err);
+      }
 
       // Call success callback
       onSuccess(data.userId, data.username, data.isVerified);
@@ -77,8 +83,14 @@ export function AuthDrawer({ isOpen, onClose, onSuccess }: AuthDrawerProps) {
       }
 
       // Store user ID in localStorage
-      localStorage.setItem('speedleague_userId', data.userId);
-      localStorage.setItem('speedleague_isVerified', 'false');
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('speedleague_userId', data.userId);
+          localStorage.setItem('speedleague_isVerified', 'false');
+        }
+      } catch (err) {
+        console.warn('Failed to save to localStorage:', err);
+      }
 
       // Call success callback
       onSuccess(data.userId, data.username, false);

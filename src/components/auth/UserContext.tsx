@@ -24,6 +24,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initUser = () => {
       try {
+        // Check if localStorage is available
+        if (typeof window === 'undefined' || !window.localStorage) {
+          setIsLoading(false);
+          return;
+        }
+
         const storedUserId = localStorage.getItem('speedleague_userId');
         const storedIsVerified = localStorage.getItem('speedleague_isVerified') === 'true';
         const storedUsername = localStorage.getItem('speedleague_username');
@@ -47,18 +53,32 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserId(newUserId);
     setUsername(newUsername);
     setIsVerified(newIsVerified);
-    localStorage.setItem('speedleague_userId', newUserId);
-    localStorage.setItem('speedleague_username', newUsername);
-    localStorage.setItem('speedleague_isVerified', String(newIsVerified));
+    
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('speedleague_userId', newUserId);
+        localStorage.setItem('speedleague_username', newUsername);
+        localStorage.setItem('speedleague_isVerified', String(newIsVerified));
+      }
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
   };
 
   const signOut = () => {
     setUserId(null);
     setUsername(null);
     setIsVerified(false);
-    localStorage.removeItem('speedleague_userId');
-    localStorage.removeItem('speedleague_username');
-    localStorage.removeItem('speedleague_isVerified');
+    
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem('speedleague_userId');
+        localStorage.removeItem('speedleague_username');
+        localStorage.removeItem('speedleague_isVerified');
+      }
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
   };
 
   const refreshUserData = async () => {
