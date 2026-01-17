@@ -87,7 +87,7 @@ export default function CircularProgress({ reactionTime, percentile }: CircularP
               </span>
             </div>
             <p className="text-sm mt-2" style={{ color: colors.text.secondary }}>
-              Top {Math.round(100 - percentile)}% today
+              Top {Math.round(percentile)}% today
             </p>
           </div>
         </div>

@@ -23,6 +23,16 @@ const defaultData: ChartData[] = [
 ];
 
 export default function WeeklyChart({ data = defaultData }: WeeklyChartProps) {
+  // Calculate dynamic domain for Y-axis based on data
+  const values = data.map(d => d.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const padding = (maxValue - minValue) * 0.1 || 10; // 10% padding or 10ms minimum
+  const yDomain = [
+    Math.floor(minValue - padding),
+    Math.ceil(maxValue + padding)
+  ];
+
   return (
     <div
       className="p-6 rounded-2xl border"
@@ -62,7 +72,7 @@ export default function WeeklyChart({ data = defaultData }: WeeklyChartProps) {
             tick={{ fill: colors.text.secondary, fontSize: 12 }}
             tickLine={false}
             axisLine={{ stroke: colors.border }}
-            domain={[150, 180]}
+            domain={yDomain}
           />
           
           <Tooltip

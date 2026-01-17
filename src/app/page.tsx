@@ -66,8 +66,10 @@ export default function HomePage() {
 
   const attemptsUsed = stats ? (stats.attemptsRemaining >= 3 ? 0 : 3 - stats.attemptsRemaining) : 0;
   const totalAttempts = 3 + (stats && stats.currentStreak >= 7 ? 2 : stats && stats.currentStreak >= 3 ? 1 : 0);
+  
+  // Demo values - replace with actual data when available
   const reactionTime = stats?.dailyBest || 187;
-  const percentile = 88; // Top 12% = 88th percentile
+  const percentile = 12; // Top 12%
 
   return (
     <ScreenContainer>
