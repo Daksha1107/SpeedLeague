@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import DailyBest from '@/models/DailyBest';
 
 const REDIS_URL = process.env.REDIS_URL || '';
 
@@ -7,13 +8,18 @@ if (!REDIS_URL) {
 }
 
 let redis: Redis | null = null;
+let redisAvailable = false;
 
 function getRedisClient(): Redis | null {
   if (!REDIS_URL) {
     return null;
   }
 
-  if (!redis) {
+  if (redis) {
+    return redis;
+  }
+
+  try {
     redis = new Redis(REDIS_URL, {
       maxRetriesPerRequest: 3,
       retryStrategy: (times) => {
@@ -22,14 +28,51 @@ function getRedisClient(): Redis | null {
         }
         return Math.min(times * 50, 2000);
       },
+      reconnectOnError: (err) => {
+        const targetError = 'READONLY';
+        if (err.message.includes(targetError)) {
+          return true;
+        }
+        return false;
+      },
+    });
+
+    redis.on('connect', () => {
+      console.log('Redis connected');
+      redisAvailable = true;
     });
 
     redis.on('error', (err) => {
-      console.error('Redis error:', err);
+      console.error('Redis error:', err.message);
+      redisAvailable = false;
     });
+
+    return redis;
+  } catch (error) {
+    console.error('Failed to create Redis client:', error);
+    return null;
+  }
+}
+
+export function isRedisAvailable(): boolean {
+  return redisAvailable && redis !== null;
+}
+
+// Safe wrapper for Redis operations
+async function safeRedisOperation<T>(
+  operation: () => Promise<T>,
+  fallback: T
+): Promise<T> {
+  if (!isRedisAvailable()) {
+    return fallback;
   }
 
-  return redis;
+  try {
+    return await operation();
+  } catch (error) {
+    console.error('Redis operation failed:', error);
+    return fallback;
+  }
 }
 
 // Helper functions for leaderboard operations
@@ -41,42 +84,50 @@ export async function updateLeaderboard(
   const client = getRedisClient();
   if (!client) return;
 
-  const key = `leaderboard:global:${date}`;
-  
-  // Lower score is better, so we use the reaction time directly
-  await client.zadd(key, reactionMs, userId);
-  
-  // Set TTL to 48 hours
-  await client.expire(key, 48 * 60 * 60);
+  await safeRedisOperation(async () => {
+    const key = `leaderboard:global:${date}`;
+    
+    // Lower score is better, so we use the reaction time directly
+    await client.zadd(key, reactionMs, userId);
+    
+    // Set TTL to 48 hours
+    await client.expire(key, 48 * 60 * 60);
+  }, undefined);
 }
 
 export async function getUserRank(
   userId: string,
   date: string
-): Promise<{ rank: number; percentile: number; total: number } | null> {
+): Promise<{ rank: number | null; percentile: number; total: number }> {
   const client = getRedisClient();
-  if (!client) return null;
-
-  const key = `leaderboard:global:${date}`;
   
-  // Get rank (0-indexed, lower is better)
-  const rank = await client.zrank(key, userId);
-  
-  if (rank === null) {
-    return null;
+  if (!client || !isRedisAvailable()) {
+    // Fallback to MongoDB query
+    return await getUserRankFromMongoDB(userId, date);
   }
 
-  // Get total number of players
-  const total = await client.zcard(key);
-  
-  // Calculate percentile (higher is better)
-  const percentile = total > 0 ? ((total - rank - 1) / total) * 100 : 0;
+  return await safeRedisOperation(async () => {
+    const key = `leaderboard:global:${date}`;
+    
+    // Get rank (0-indexed, lower is better)
+    const rank = await client.zrank(key, userId);
+    
+    if (rank === null) {
+      return { rank: null, percentile: 0, total: 0 };
+    }
 
-  return {
-    rank: rank + 1, // Convert to 1-indexed
-    percentile: Math.round(percentile * 10) / 10,
-    total,
-  };
+    // Get total number of players
+    const total = await client.zcard(key);
+    
+    // Calculate percentile (higher is better)
+    const percentile = total > 0 ? ((total - rank - 1) / total) * 100 : 0;
+
+    return {
+      rank: rank + 1, // Convert to 1-indexed
+      percentile: Math.round(percentile * 10) / 10,
+      total,
+    };
+  }, { rank: null, percentile: 0, total: 0 });
 }
 
 export async function getTopPlayers(
@@ -84,24 +135,30 @@ export async function getTopPlayers(
   limit: number = 100
 ): Promise<Array<{ userId: string; reactionMs: number; rank: number }>> {
   const client = getRedisClient();
-  if (!client) return [];
 
-  const key = `leaderboard:global:${date}`;
-  
-  // Get top players with scores (ZRANGE with WITHSCORES)
-  const results = await client.zrange(key, 0, limit - 1, 'WITHSCORES');
-  
-  const players: Array<{ userId: string; reactionMs: number; rank: number }> = [];
-  
-  for (let i = 0; i < results.length; i += 2) {
-    players.push({
-      userId: results[i],
-      reactionMs: parseFloat(results[i + 1]),
-      rank: i / 2 + 1,
-    });
+  if (!client || !isRedisAvailable()) {
+    // Fallback to MongoDB
+    return await getTopPlayersFromMongoDB(date, limit);
   }
 
-  return players;
+  return await safeRedisOperation(async () => {
+    const key = `leaderboard:global:${date}`;
+    
+    // Get top players with scores (ZRANGE with WITHSCORES)
+    const results = await client.zrange(key, 0, limit - 1, 'WITHSCORES');
+    
+    const players: Array<{ userId: string; reactionMs: number; rank: number }> = [];
+    
+    for (let i = 0; i < results.length; i += 2) {
+      players.push({
+        userId: results[i],
+        reactionMs: parseFloat(results[i + 1]),
+        rank: i / 2 + 1,
+      });
+    }
+
+    return players;
+  }, []);
 }
 
 export async function getUserDailyBest(
@@ -183,6 +240,40 @@ export async function getAttemptsRemaining(
   }
 
   return Math.max(0, maxAttempts - used);
+}
+
+// MongoDB fallback functions
+async function getUserRankFromMongoDB(userId: string, date: string) {
+  const userBest = await DailyBest.findOne({ userId, date });
+  if (!userBest) {
+    return { rank: null, total: 0, percentile: 0 };
+  }
+
+  const betterCount = await DailyBest.countDocuments({
+    date,
+    bestMs: { $lt: userBest.bestMs }
+  });
+  
+  const total = await DailyBest.countDocuments({ date });
+  
+  return {
+    rank: betterCount + 1,
+    total,
+    percentile: total > 0 ? Math.round(((total - betterCount) / total) * 100 * 10) / 10 : 0
+  };
+}
+
+async function getTopPlayersFromMongoDB(date: string, limit: number) {
+  const results = await DailyBest.find({ date })
+    .sort({ bestMs: 1 })
+    .limit(limit)
+    .select('userId bestMs');
+
+  return results.map((r, i) => ({
+    userId: r.userId,
+    reactionMs: r.bestMs,
+    rank: i + 1
+  }));
 }
 
 export default getRedisClient;

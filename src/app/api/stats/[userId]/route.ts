@@ -23,8 +23,8 @@ export async function GET(
 
     await connectDB();
 
-    // Get user
-    const user = await User.findById(userId);
+    // Get user - Fix: Use findOne instead of findById
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -69,7 +69,18 @@ export async function GET(
       weeklyBest,
     };
 
-    return NextResponse.json(stats);
+    return NextResponse.json({
+      ...stats,
+      user: {
+        id: user._id,
+        username: user.username,
+        isVerified: user.isVerified,
+        country: user.country,
+        totalAttempts: user.totalAttempts,
+        createdAt: user.createdAt,
+        preferences: user.preferences,
+      },
+    });
   } catch (error) {
     console.error('Error fetching user stats:', error);
     return NextResponse.json(

@@ -2,6 +2,13 @@ import mongoose, { Schema, Model } from 'mongoose';
 import { IUser } from '@/types';
 
 const UserSchema = new Schema<IUser>({
+  _id: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+  },
   worldId: {
     type: String,
     unique: true,
@@ -40,7 +47,23 @@ const UserSchema = new Schema<IUser>({
   allTimeBest: {
     type: Number,
   },
-});
+  // User preferences and settings
+  preferences: {
+    soundEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    theme: {
+      type: String,
+      enum: ['light', 'dark', 'auto'],
+      default: 'auto',
+    },
+    notifications: {
+      type: Boolean,
+      default: true,
+    },
+  },
+}, { _id: false });
 
 // Index for verified users sorted by activity
 UserSchema.index({ isVerified: 1, lastActive: -1 });

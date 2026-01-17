@@ -31,15 +31,15 @@ export async function POST(request: NextRequest) {
 
     // Check if nullifier has already been used
     const existingUser = await User.findOne({ worldId: nullifier_hash });
-    if (existingUser && existingUser._id.toString() !== userId) {
+    if (existingUser && existingUser._id !== userId) {
       return NextResponse.json(
         { error: 'This World ID has already been verified with another account' },
         { status: 400 }
       );
     }
 
-    // Update user with verification
-    const user = await User.findById(userId);
+    // Update user with verification - Fix: Use findOne instead of findById
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },

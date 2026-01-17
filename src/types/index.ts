@@ -1,6 +1,7 @@
 // User types
 export interface IUser {
   _id: string;
+  username?: string;
   worldId?: string;
   isVerified: boolean;
   country?: string;
@@ -11,6 +12,11 @@ export interface IUser {
   lastPlayedDate?: string;
   totalAttempts: number;
   allTimeBest?: number;
+  preferences?: {
+    soundEnabled: boolean;
+    theme: 'light' | 'dark' | 'auto';
+    notifications: boolean;
+  };
 }
 
 // Attempt types
@@ -97,6 +103,7 @@ export interface LeaderboardEntry {
   userId: string;
   rank: number;
   reactionMs: number;
+  username?: string;
   country?: string;
   isVerified: boolean;
 }
