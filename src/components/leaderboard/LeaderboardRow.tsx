@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { colors, components, measurements } from '@/styles/theme';
 import { User } from 'lucide-react';
 
 interface LeaderboardRowProps {
@@ -26,28 +25,15 @@ export default function LeaderboardRow({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay }}
-      className="flex items-center gap-4 px-4 py-3 rounded-2xl border"
-      style={{
-        height: measurements.leaderboard.rowHeight,
-        backgroundColor: isCurrentUser 
-          ? 'rgba(0, 180, 255, 0.1)' 
-          : colors.background.cardTransparent,
-        borderColor: isTopRank 
-          ? colors.primary.accent 
-          : isCurrentUser
-          ? colors.primary.blue
-          : colors.border,
-        boxShadow: isTopRank 
-          ? `0 0 20px ${colors.primary.accent}40`
-          : components.card.shadow,
-      }}
+      className={`soft-card px-4 py-3 flex items-center gap-3 ${
+        isCurrentUser ? 'glow-blue' : ''
+      }`}
     >
       {/* Rank Number */}
       <div 
-        className="flex items-center justify-center font-bold text-lg"
+        className="flex items-center justify-center font-semibold text-sm w-6"
         style={{
-          width: '32px',
-          color: isTopRank ? colors.primary.accent : colors.text.primary,
+          color: 'rgba(255,255,255,0.6)',
         }}
       >
         {rank}
@@ -55,31 +41,22 @@ export default function LeaderboardRow({
 
       {/* Avatar */}
       <div
-        className="flex items-center justify-center rounded-full overflow-hidden"
+        className="flex items-center justify-center rounded-full overflow-hidden w-10 h-10"
         style={{
-          width: measurements.leaderboard.avatarSize,
-          height: measurements.leaderboard.avatarSize,
           backgroundColor: 'rgba(100, 116, 139, 0.2)',
         }}
       >
-        <User size={20} color={colors.text.secondary} />
+        <User size={20} color="rgba(255,255,255,0.6)" />
       </div>
 
       {/* Name */}
-      <div className="flex-1">
-        <p className="text-base font-semibold text-white">
-          {name}
-        </p>
+      <div className="flex-1 text-white font-medium">
+        {name}
       </div>
 
       {/* Reaction Time */}
-      <div className="text-right">
-        <p 
-          className="text-lg font-bold"
-          style={{ color: colors.primary.accent }}
-        >
-          {reactionTime}ms
-        </p>
+      <div className="text-[var(--blue)] font-semibold">
+        {reactionTime}ms
       </div>
     </motion.div>
   );

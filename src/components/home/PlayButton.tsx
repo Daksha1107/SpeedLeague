@@ -1,29 +1,39 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { colors, components } from '@/styles/theme';
+import { ReactNode } from 'react';
 
-interface PlayButtonProps {
-  onClick: () => void;
+interface PrimaryButtonProps {
+  onClick?: () => void;
   disabled?: boolean;
-  attemptsRemaining?: number;
+  children?: ReactNode;
+  className?: string;
 }
 
-export default function PlayButton({ onClick, disabled = false, attemptsRemaining }: PlayButtonProps) {
+export default function PrimaryButton({ 
+  onClick, 
+  disabled = false, 
+  children = "PLAY DUEL",
+  className = ""
+}: PrimaryButtonProps) {
   return (
     <motion.button
       onClick={onClick}
       disabled={disabled}
       whileHover={!disabled ? { scale: 1.02, filter: 'brightness(1.1)' } : {}}
       whileTap={!disabled ? { scale: 0.98 } : {}}
-      className="w-full text-white text-lg font-bold rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      className={`w-full text-white text-lg font-semibold rounded-2xl glow-blue transition-all disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       style={{
-        height: components.button.primary.height,
-        background: disabled ? colors.track : components.button.primary.gradient,
-        boxShadow: disabled ? 'none' : `0 8px 24px ${colors.primary.blue}40`,
+        height: '56px',
+        background: disabled 
+          ? 'rgba(255,255,255,0.1)' 
+          : 'linear-gradient(90deg, var(--blue2), var(--blue))',
       }}
     >
-      PLAY DUEL
+      {children}
     </motion.button>
   );
 }
+
+// Export as PrimaryButton with alias for backward compatibility
+export { PrimaryButton as PlayButton };

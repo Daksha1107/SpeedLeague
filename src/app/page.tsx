@@ -3,16 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw, Flame } from 'lucide-react';
-import ScreenContainer from '@/components/layout/ScreenContainer';
 import BottomNav from '@/components/layout/BottomNav';
 import TopBar from '@/components/layout/TopBar';
-import CircularProgress from '@/components/home/CircularProgress';
-import StatsCard from '@/components/home/StatsCard';
+import GaugeRing from '@/components/home/CircularProgress';
+import StatPill from '@/components/home/StatsCard';
 import LeagueProgress from '@/components/home/LeagueProgress';
-import PlayButton from '@/components/home/PlayButton';
+import PrimaryButton from '@/components/home/PlayButton';
 import { UserStats } from '@/types';
 import { generateUserId } from '@/lib/utils';
-import { colors } from '@/styles/theme';
 
 export default function HomePage() {
   const router = useRouter();
@@ -53,14 +51,14 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <ScreenContainer>
-        <div className="min-h-screen flex items-center justify-center">
+      <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+        <div className="mx-auto max-w-[420px] px-4 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="text-4xl mb-4">⚡</div>
-            <p style={{ color: colors.text.secondary }}>Loading...</p>
+            <p className="text-[var(--muted)]">Loading...</p>
           </div>
         </div>
-      </ScreenContainer>
+      </main>
     );
   }
 
@@ -72,51 +70,56 @@ export default function HomePage() {
   const percentile = 12; // Top 12%
 
   return (
-    <ScreenContainer>
-      <TopBar 
-        title="Reflex Duel" 
-        showHome={true}
-        showSettings={true}
-      />
-
-      <div className="py-6 space-y-6">
-        {/* Circular Progress */}
-        <CircularProgress 
-          reactionTime={reactionTime}
-          percentile={percentile}
-        />
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 gap-4">
-          <StatsCard
-            icon={<RefreshCw size={20} color={colors.primary.accent} />}
-            label="Attempts"
-            value={`${attemptsUsed}/${totalAttempts}`}
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      <div className="mx-auto max-w-[420px] px-4 pt-6 pb-24">
+        
+        {/* TopBar */}
+        <TopBar />
+        
+        {/* Main Card */}
+        <div className="mt-8 soft-card p-6">
+          
+          {/* Gauge Ring */}
+          <GaugeRing 
+            value={reactionTime}
+            percentile={percentile}
           />
-          <StatsCard
-            icon={<Flame size={20} color="#F59E0B" />}
-            label="Streak"
-            value={`${stats?.currentStreak || 5} days`}
-          />
+          
+          {/* Stat Pills */}
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <StatPill
+              icon={<RefreshCw size={20} color="var(--blue)" />}
+              label="Attempts"
+              value={`${attemptsUsed}/${totalAttempts}`}
+            />
+            <StatPill
+              icon={<Flame size={20} color="#F59E0B" />}
+              label="Streak"
+              value={`${stats?.currentStreak || 5} days`}
+            />
+          </div>
+          
+          {/* League Progress */}
+          {stats?.currentLeague && (
+            <LeagueProgress 
+              tier={stats.currentLeague}
+              progress={62}
+            />
+          )}
+          
+          {/* CTA Button */}
+          <PrimaryButton
+            onClick={handlePlayDuel}
+            disabled={stats?.attemptsRemaining === 0}
+            className="mt-6"
+          >
+            PLAY DUEL
+          </PrimaryButton>
+          
         </div>
-
-        {/* League Progress */}
-        {stats?.currentLeague && (
-          <LeagueProgress 
-            tier={stats.currentLeague}
-            progress={70}
-          />
-        )}
-
-        {/* Play Button */}
-        <PlayButton
-          onClick={handlePlayDuel}
-          disabled={stats?.attemptsRemaining === 0}
-          attemptsRemaining={stats?.attemptsRemaining}
-        />
       </div>
-
+      
       <BottomNav />
-    </ScreenContainer>
+    </main>
   );
 }
