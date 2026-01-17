@@ -47,14 +47,14 @@ export async function GET(request: NextRequest) {
       // If userId provided, get their rank
       if (userId) {
         const rankInfo = await getUserRank(userId, today);
-        if (rankInfo) {
+        if (rankInfo && rankInfo.rank !== null) {
           userRank = rankInfo.rank;
           userPercentile = rankInfo.percentile;
         }
 
         // If user is not in top N, include context around their position
         const userInTop = entries.some(e => e.userId === userId);
-        if (!userInTop && rankInfo) {
+        if (!userInTop && rankInfo && rankInfo.rank !== null) {
           // Get 5 players above and below the user
           const contextPlayers = await getTopPlayers(today, 1000);
           const userIndex = contextPlayers.findIndex(p => p.userId === userId);

@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 
       // Get rank and percentile
       const rankInfo = await getUserRank(userId, today);
-      if (rankInfo) {
+      if (rankInfo && rankInfo.rank !== null) {
         rank = rankInfo.rank;
         currentPercentile = rankInfo.percentile;
 
