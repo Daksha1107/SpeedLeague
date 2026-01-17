@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (!user) {
       // Create new user
-      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       
       user = await User.create({
         _id: userId,

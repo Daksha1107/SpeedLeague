@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import DailyBest from '@/models/DailyBest';
 
 const REDIS_URL = process.env.REDIS_URL || '';
 
@@ -243,8 +244,6 @@ export async function getAttemptsRemaining(
 
 // MongoDB fallback functions
 async function getUserRankFromMongoDB(userId: string, date: string) {
-  const DailyBest = (await import('@/models/DailyBest')).default;
-  
   const userBest = await DailyBest.findOne({ userId, date });
   if (!userBest) {
     return { rank: null, total: 0, percentile: 0 };
@@ -265,8 +264,6 @@ async function getUserRankFromMongoDB(userId: string, date: string) {
 }
 
 async function getTopPlayersFromMongoDB(date: string, limit: number) {
-  const DailyBest = (await import('@/models/DailyBest')).default;
-  
   const results = await DailyBest.find({ date })
     .sort({ bestMs: 1 })
     .limit(limit)

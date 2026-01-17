@@ -47,6 +47,22 @@ const UserSchema = new Schema<IUser>({
   allTimeBest: {
     type: Number,
   },
+  // User preferences and settings
+  preferences: {
+    soundEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    theme: {
+      type: String,
+      enum: ['light', 'dark', 'auto'],
+      default: 'auto',
+    },
+    notifications: {
+      type: Boolean,
+      default: true,
+    },
+  },
 }, { _id: false });
 
 // Index for verified users sorted by activity

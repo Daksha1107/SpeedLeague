@@ -69,7 +69,18 @@ export async function GET(
       weeklyBest,
     };
 
-    return NextResponse.json(stats);
+    return NextResponse.json({
+      ...stats,
+      user: {
+        id: user._id,
+        username: user.username,
+        isVerified: user.isVerified,
+        country: user.country,
+        totalAttempts: user.totalAttempts,
+        createdAt: user.createdAt,
+        preferences: user.preferences,
+      },
+    });
   } catch (error) {
     console.error('Error fetching user stats:', error);
     return NextResponse.json(

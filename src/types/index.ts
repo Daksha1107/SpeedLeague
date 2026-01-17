@@ -12,6 +12,11 @@ export interface IUser {
   lastPlayedDate?: string;
   totalAttempts: number;
   allTimeBest?: number;
+  preferences?: {
+    soundEnabled: boolean;
+    theme: 'light' | 'dark' | 'auto';
+    notifications: boolean;
+  };
 }
 
 // Attempt types
@@ -98,6 +103,7 @@ export interface LeaderboardEntry {
   userId: string;
   rank: number;
   reactionMs: number;
+  username?: string;
   country?: string;
   isVerified: boolean;
 }

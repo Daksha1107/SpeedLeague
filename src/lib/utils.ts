@@ -127,5 +127,5 @@ export function calculatePercentile(rank: number, total: number): number {
 
 // Generate user ID (simple implementation)
 export function generateUserId(): string {
-  return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `user_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }

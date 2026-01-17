@@ -6,7 +6,7 @@ export async function POST() {
   try {
     await connectDB();
 
-    const userId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userId = `guest_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
     const user = await User.create({
       _id: userId,

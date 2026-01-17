@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
           reactionMs: player.reactionMs,
           country: user?.country,
           isVerified: user?.isVerified || false,
+          username: user?.username || 'Unknown Player',
         };
       });
 
@@ -76,6 +77,7 @@ export async function GET(request: NextRequest) {
                 reactionMs: player.reactionMs,
                 country: user?.country,
                 isVerified: user?.isVerified || false,
+                username: user?.username || 'Unknown Player',
               };
             });
           }
@@ -109,6 +111,7 @@ export async function GET(request: NextRequest) {
           reactionMs: db.bestMs,
           country: user?.country,
           isVerified: user?.isVerified || false,
+          username: user?.username || 'Unknown Player',
         };
       });
 
